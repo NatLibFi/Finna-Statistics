@@ -138,7 +138,7 @@ class StatsProcessor
     /**
      * Fetches the xml object from the Solr index.
      * @param string[] $params List of query parameters to the Solr query url
-     * @return SimpleXMLElement XML object retrieved from the Solr index
+     * @return \SimpleXMLElement XML object retrieved from the Solr index
      */
     private function fetchXml(array $params)
     {
