@@ -88,8 +88,8 @@ class StatsProcessor
         $this->log(sprintf(
             'Statistics processing finished in %d ms at %s',
             (microtime(true) - $timer) * 1000,
-            date('r'))
-        );
+            date('r')
+        ));
 
         return $results;
     }
@@ -112,7 +112,7 @@ class StatsProcessor
         $xml = $this->fetchXml(['q' => '*:*', 'rows' => '0', 'facet' => 'true', 'facet.field' => 'sector_str_mv']);
         $queries = [];
 
-        foreach($xml->xpath('//lst[@name="sector_str_mv"]/int') as $sectorItem) {
+        foreach ($xml->xpath('//lst[@name="sector_str_mv"]/int') as $sectorItem) {
             $queries[] = sprintf('sector_str_mv:"%s"', (string) $sectorItem['name']);
         }
 
@@ -125,11 +125,13 @@ class StatsProcessor
      */
     private function getFormatQueries()
     {
-        $xml = $this->fetchXml(['q' => '*:*', 'rows' => '0', 'facet' => 'true', 'facet.field' => 'format', 'facet.prefix' => '0']);
+        $xml = $this->fetchXml(
+            ['q' => '*:*', 'rows' => '0', 'facet' => 'true', 'facet.field' => 'format', 'facet.prefix' => '0']
+        );
         $queries = [];
 
-        foreach($xml->xpath('//lst[@name="format"]/int') as $formatItem) {
-            $queries[] = sprintf('format:"%s"',  (string) $formatItem['name']);
+        foreach ($xml->xpath('//lst[@name="format"]/int') as $formatItem) {
+            $queries[] = sprintf('format:"%s"', (string) $formatItem['name']);
         }
 
         return $queries;
@@ -181,7 +183,9 @@ class StatsProcessor
         if (curl_errno($curl)) {
             throw new \RuntimeException('CURL error fetching from Solr: ' . curl_error($curl));
         } elseif (200 !== curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
-            throw new \RuntimeException('Unexpected response code from Solr: ' . curl_getinfo($curl, CURLINFO_HTTP_CODE));
+            throw new \RuntimeException(
+                'Unexpected response code from Solr: ' . curl_getinfo($curl, CURLINFO_HTTP_CODE)
+            );
         }
     }
 
@@ -195,7 +199,7 @@ class StatsProcessor
     {
         $xml = new \SimpleXMLElement($string);
 
-        if($xml->result['numFound'] === null) {
+        if ($xml->result['numFound'] === null) {
             throw new \UnexpectedValueException('Invalid response from Solr');
         }
 
