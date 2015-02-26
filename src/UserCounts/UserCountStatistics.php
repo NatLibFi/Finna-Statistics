@@ -88,7 +88,7 @@ class UserCountStatistics
         }
 
         $stmt = $this->db->prepare("
-            SELECT SUBSTRING_INDEX(`username`, ':', 1) as `institution`, `authMethod`, COUNT(*)
+            SELECT SUBSTRING_INDEX(`username`, ':', 1), `authMethod`, COUNT(*)
             FROM `$this->table`
             WHERE `username` LIKE '%:%' $where
             GROUP BY SUBSTRING_INDEX(`username`, ':', 1), `authMethod`
