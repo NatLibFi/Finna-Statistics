@@ -1,0 +1,11 @@
+{
+  "username" : "",
+  "password" : "",
+  "hostname" : "localhost",
+  "database" : "vufind",
+
+  "table" : "user",
+
+  "institutions" : [
+  ]
+}
