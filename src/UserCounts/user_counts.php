@@ -16,7 +16,7 @@ date_default_timezone_set('UTC');
 
 require_once __DIR__ . '/UserCountStatistics.php';
 
-// Initialize PDO in a proper way
+// Initialize PDO in way the handles common issues
 $db = new \PDO(
     sprintf("mysql:dbname=%s;host=%s;charset=utf8", $settings['database'], $settings['hostname']),
     $settings['username'],
@@ -29,20 +29,20 @@ $db = new \PDO(
 
 $db->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
 
+// Fetch the user account counts
 $stats = new \Finna\Stats\UserCounts\UserCountStatistics($db, $settings['table']);
 $methods = $stats->getAuthMethods();
 $results = $stats->getAccountsByOrganisation($settings['institutions']);
 
+// Save results in a csv file
 $handle = fopen($argv[2], 'a');
 fputcsv($handle, array_merge(['date', 'organisation', 'total'], $methods));
 
 foreach ($results as $result) {
-    $row = array_merge(
+    fputcsv($handle, array_merge(
         [$result['date'], $result['name'], $result['total']],
         array_values($result['types'])
-    );
-
-    fputcsv($handle, $row);
+    ));
 }
 
 fclose($handle);
