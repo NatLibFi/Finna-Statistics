@@ -34,4 +34,6 @@ number of accounts appended by the number of accounts for each authentication
 method.
 
 To get the list of different authentication methods in the database, you can run
-the command: `php src/UserCounts/list_methods.php <settings-file>`
+the command:
+
+`php src/UserCounts/list_methods.php <settings-file>`

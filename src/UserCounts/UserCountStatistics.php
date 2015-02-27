@@ -25,11 +25,16 @@ class UserCountStatistics
     {
         $this->db = $db;
         $this->table = 'user';
+        $this->authMethods = [];
     }
 
-    public function setAuthMethods($authMethods)
+    /**
+     * Sets the authentication methods to look for in the database
+     * @param string[] $authMethods Authentication methods to look for
+     */
+    public function setAuthMethods(array $authMethods)
     {
-        $this->authMethods = array_map('strtolower', $authMethods);
+        $this->authMethods = $authMethods;
     }
 
     /**
@@ -70,33 +75,20 @@ class UserCountStatistics
      */
     public function getAccountsByOrganisation(array $institutions = [])
     {
+        $methods = $this->authMethods === [] ? $this->listAuthMethods() : $this->authMethods;
         $emptyRow = [
             'date' => date('c'),
             'name' => '',
             'total' => 0,
-            'types' => array_fill_keys($this->authMethods, 0),
+            'types' => array_fill_keys(array_map('strtolower', $methods), 0),
         ];
 
         $total = $emptyRow;
         $total['name'] = 'total';
         $results = [];
 
-        $where = '';
-        $methods = implode(', ', array_fill(0, count($this->authMethods), '?'));
-        $params = $this->authMethods;
-
-        if ($institutions !== []) {
-            $where = sprintf("AND SUBSTRING_INDEX(`username`, ':', 1) IN (%s)", implode(', ', array_fill(0, count($institutions), '?')));
-            $params = $institutions;
-        }
-
-        $stmt = $this->db->prepare("
-            SELECT SUBSTRING_INDEX(`username`, ':', 1), `authMethod`, COUNT(*)
-            FROM `$this->table`
-            WHERE `username` LIKE '%:%' AND `authMethod` IN ($methods) $where
-            GROUP BY SUBSTRING_INDEX(`username`, ':', 1), `authMethod`
-        ");
-
+        list($sql, $params) = $this->getUserCountQuery($institutions);
+        $stmt = $this->db->prepare($sql);
         $stmt->setFetchMode(\PDO::FETCH_NUM);
         $stmt->execute($params);
 
@@ -117,5 +109,43 @@ class UserCountStatistics
 
         array_unshift($results, $total);
         return $results;
+    }
+
+    /**
+     * Creates the SQL query to fetch the user counts.
+     * @param string[] $institutions List of institutions or empty array for all
+     * @return array Array containing the SQL and the parameters
+     */
+    private function getUserCountQuery($institutions)
+    {
+        $params = [];
+        $clauses = [];
+
+        if ($this->authMethods !== []) {
+            $params = array_merge($params, $this->authMethods);
+            $clauses[] = sprintf(
+                "`authMethod` IN (%s)",
+                implode(', ', array_fill(0, count($this->authMethods), '?'))
+            );
+        }
+
+        if ($institutions !== []) {
+            $params = array_merge($params, $institutions);
+            $clauses[] = sprintf(
+                "SUBSTRING_INDEX(`username`, ':', 1) IN (%s)",
+                implode(', ', array_fill(0, count($institutions), '?'))
+            );
+        }
+
+        $where = count($clauses) === 0 ? '' : 'WHERE ' . implode(' AND ', $clauses);
+
+        $sql = "
+            SELECT SUBSTRING_INDEX(`username`, ':', 1), `authMethod`, COUNT(*)
+            FROM `$this->table`
+            $where
+            GROUP BY SUBSTRING_INDEX(`username`, ':', 1), `authMethod`
+        ";
+
+        return [$sql, $params];
     }
 }
