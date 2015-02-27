@@ -14,7 +14,7 @@ class UserCountStatistics
     private $table;
 
     /** @var string[] List of authentication methods retrieved from the database */
-    private $methods;
+    private $authMethods;
 
     /**
      * Creates a new instance of UserCountStatistics.
@@ -27,21 +27,23 @@ class UserCountStatistics
         $this->table = 'user';
     }
 
+    public function setAuthMethods($authMethods)
+    {
+        $this->authMethods = array_map('strtolower', $authMethods);
+    }
+
     /**
      * Returns a list of authenticated methods used in the user table.
      * @return string[] List of authentication methods in the database
      */
-    public function getAuthMethods()
+    public function listAuthMethods()
     {
-        if (!isset($this->methods)) {
-            $stmt = $this->db->prepare("
-                SELECT DISTINCT `authMethod` FROM `$this->table`
-            ");
-            $stmt->execute();
-            $this->methods = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
-        }
+        $stmt = $this->db->prepare("
+            SELECT DISTINCT `authMethod` FROM `$this->table`
+        ");
+        $stmt->execute();
 
-        return $this->methods;
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
     }
 
     /**
@@ -72,7 +74,7 @@ class UserCountStatistics
             'date' => date('c'),
             'name' => '',
             'total' => 0,
-            'types' => array_fill_keys($this->getAuthMethods(), 0),
+            'types' => array_fill_keys($this->authMethods, 0),
         ];
 
         $total = $emptyRow;
@@ -80,7 +82,8 @@ class UserCountStatistics
         $results = [];
 
         $where = '';
-        $params = [];
+        $methods = implode(', ', array_fill(0, count($this->authMethods), '?'));
+        $params = $this->authMethods;
 
         if ($institutions !== []) {
             $where = sprintf("AND SUBSTRING_INDEX(`username`, ':', 1) IN (%s)", implode(', ', array_fill(0, count($institutions), '?')));
@@ -90,7 +93,7 @@ class UserCountStatistics
         $stmt = $this->db->prepare("
             SELECT SUBSTRING_INDEX(`username`, ':', 1), `authMethod`, COUNT(*)
             FROM `$this->table`
-            WHERE `username` LIKE '%:%' $where
+            WHERE `username` LIKE '%:%' AND `authMethod` IN ($methods) $where
             GROUP BY SUBSTRING_INDEX(`username`, ':', 1), `authMethod`
         ");
 
@@ -99,6 +102,7 @@ class UserCountStatistics
 
         foreach ($stmt as $row) {
             list($name, $method, $count) = $row;
+            $method = strtolower($method);
 
             if (!isset($results[$name])) {
                 $results[$name] = $emptyRow;

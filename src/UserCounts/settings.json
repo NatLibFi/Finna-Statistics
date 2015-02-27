@@ -6,6 +6,10 @@
 
   "table" : "user",
 
+  "authMethods" : [
+    "MozillaPersona"
+  ],
+
   "institutions" : [
   ]
 }
