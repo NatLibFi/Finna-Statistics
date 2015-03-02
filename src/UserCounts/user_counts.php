@@ -15,7 +15,7 @@ $db = $settings->loadDatabase();
 
 // Fetch the user account counts
 $stats = new \Finna\Stats\UserCounts\UserCountStatistics($db, $settings['table']);
-$methods = $stats->setAuthMethods($settings['authMethods']);
+$stats->setAuthMethods($settings['authMethods']);
 $results = $stats->getAccountsByOrganisation($settings['institutions']);
 
 // Save results in a csv file
