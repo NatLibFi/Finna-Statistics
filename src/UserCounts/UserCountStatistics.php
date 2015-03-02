@@ -122,11 +122,23 @@ class UserCountStatistics
         $clauses = [];
 
         if ($this->authMethods !== []) {
-            $params = array_merge($params, $this->authMethods);
-            $clauses[] = sprintf(
-                "`authMethod` IN (%s)",
-                implode(', ', array_fill(0, count($this->authMethods), '?'))
-            );
+            $methods = $this->authMethods;
+            $clause = [];
+
+            if (($key = array_search(null, $methods, true)) !== false) {
+                $clause[] = '`authMethod` IS NULL';
+                unset($methods[$key]);
+            }
+
+            if ($methods !== []) {
+                $params = array_merge($params, $methods);
+                $clause[] = sprintf(
+                    "`authMethod` IN (%s)",
+                    implode(', ', array_fill(0, count($methods), '?'))
+                );
+            }
+
+            $clauses[] = sprintf('(%s)', implode(' OR ', $clause));
         }
 
         if ($institutions !== []) {
