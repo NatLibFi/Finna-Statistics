@@ -14,5 +14,5 @@ $db = $settings->loadDatabase();
 $stats = new \Finna\Stats\UserCounts\UserCountStatistics($db, $settings['table']);
 
 foreach ($stats->listAuthMethods() as $method) {
-    echo $method . PHP_EOL;
+    echo ($method === null ? 'NULL' : $method) . PHP_EOL;
 }
