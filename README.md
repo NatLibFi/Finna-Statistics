@@ -18,6 +18,17 @@ The results will be appended as CSV rows to the provided `<output-file>` path.
 Each result row contains the fields `date` and `query` appended by the number
 of entries for each filter set.
 
+#### Configuration ####
+
+The `settings.json` file contains following settings:
+
+   * `url` : That path to the polled Solr index.
+   * `filters` : List of filters that can be used in queries
+   * `filterSets` : List of filter combinations that will be applied to each
+      query
+   * `queries` : List of custom queries performed in addition sector and format
+     queries
+
 ### User account count statistics ###
 
 Usage `php src/UserCounts/user_counts.php <settings-file> <output-file>`
@@ -37,3 +48,18 @@ To get the list of different authentication methods in the database, you can run
 the command:
 
 `php src/UserCounts/list_methods.php <settings-file>`
+
+#### Configuration ####
+
+The `settings.json` file contains the following settings:
+
+  * `username` : The database username used to access the database
+  * `password` : The password for the database user
+  * `hostname` : The database hostname
+  * `database` : The name of the database
+  * `table` : Name of the table that contains the user data
+  * `authMethods` : List of auth methods that are included in the statistics.
+    Empty array can be used for all methods. (The order of columns in the
+    results in not guaranteed, however).
+  * `institutions` : List of institutions included in the statistics. Empty
+    array can be used for all institutions.
