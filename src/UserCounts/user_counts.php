@@ -34,10 +34,22 @@ if (empty($argv[1]) || empty($argv[2])) {
 $settings = new \Finna\Stats\Utility\SettingsFile($argv[1]);
 $db = $settings->loadDatabase();
 
-// Fetch the user account counts
+// Fetch the total user account counts
 $stats = new \Finna\Stats\UserCounts\UserCountStatistics($db, $settings['table']);
 $stats->setAuthMethods($settings['authMethods']);
 $results = $stats->getAccountsByOrganisation($settings['institutions']);
+
+// Add statistics rows for active accounts
+if (!empty($settings['maxAge'])) {
+    $stats->setMaxAge($settings['maxAge']);
+    $active = $stats->getAccountsByOrganisation($settings['institutions']);
+
+    foreach ($active as $key => $values) {
+        $active[$key]['name'] = $values['name'] . ' - active';
+    }
+
+    $results = array_merge($results, $active);
+}
 
 // Save results in a csv file
 $handle = fopen($argv[2], 'a');

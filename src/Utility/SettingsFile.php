@@ -64,7 +64,7 @@ class SettingsFile implements \ArrayAccess
      */
     public function loadDatabase()
     {
-        $db = new \PDO(
+        $pdo = new \PDO(
             sprintf("mysql:dbname=%s;host=%s;charset=utf8", $this['database'], $this['hostname']),
             $this['username'],
             $this['password'],
@@ -74,9 +74,9 @@ class SettingsFile implements \ArrayAccess
             ]
         );
 
-        $db->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+        $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
 
-        return $db;
+        return $pdo;
     }
 
     /**

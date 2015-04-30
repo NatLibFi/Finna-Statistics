@@ -29,7 +29,7 @@ namespace Finna\Stats\UserCounts;
 class UserCountStatistics
 {
     /** @var \PDO The PDO instance used to access the user database. */
-    private $db;
+    private $pdo;
 
     /** @var string Name of the table containing the user data */
     private $table;
@@ -37,16 +37,28 @@ class UserCountStatistics
     /** @var string[] List of authentication methods retrieved from the database */
     private $authMethods;
 
+    /** @var int|null Maximum number of seconds since last login or null for no limit */
+    private $maxAge;
+
     /**
      * Creates a new instance of UserCountStatistics.
-     * @param \PDO $db The connection used to access the user database
+     * @param \PDO $pdo The connection used to access the user database
      * @param string $table Name of the table containing the user data
      */
-    public function __construct(\PDO $db, $table = 'user')
+    public function __construct(\PDO $pdo, $table = 'user')
     {
-        $this->db = $db;
-        $this->table = 'user';
+        $this->pdo = $pdo;
+        $this->table = $table;
         $this->authMethods = [];
+    }
+
+    /**
+     * Sets the maximum number of seconds since last login for counted accounts.
+     * @param int|null $seconds Maximum number of seconds since last login or null for no limit
+     */
+    public function setMaxAge($seconds)
+    {
+        $this->maxAge = $seconds === null ? null : (int) $seconds;
     }
 
     /**
@@ -64,7 +76,7 @@ class UserCountStatistics
      */
     public function listAuthMethods()
     {
-        $stmt = $this->db->prepare("
+        $stmt = $this->pdo->prepare("
             SELECT DISTINCT `authMethod` FROM `$this->table`
         ");
         $stmt->execute();
@@ -106,30 +118,46 @@ class UserCountStatistics
 
         $total = $emptyRow;
         $total['name'] = 'total';
+        $names = $institutions;
+
+        // Populate the result array even for institutions with 0 accounts
+        if (!$institutions) {
+            $stmt = $this->pdo->query("
+                SELECT DISTINCT SUBSTRING_INDEX(`username`, ':', 1) as `name`
+                FROM `$this->table`
+                ORDER BY `name`
+            ");
+
+            $names = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
+        }
+
         $results = [];
 
+        foreach ($names as $institution) {
+            $key = strtolower($institution);
+
+            $results[$key] = $emptyRow;
+            $results[$key]['name'] = $institution;
+        }
+
         list($sql, $params) = $this->getUserCountQuery($institutions);
-        $stmt = $this->db->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->setFetchMode(\PDO::FETCH_NUM);
         $stmt->execute($params);
 
         foreach ($stmt as $row) {
-            list($name, $method, $count) = $row;
+            list($institution, $method, $count) = $row;
             $method = strtolower($method);
-
-            if (!isset($results[$name])) {
-                $results[$name] = $emptyRow;
-                $results[$name]['name'] = $name;
-            }
+            $institution = strtolower($institution);
 
             $total['total'] += $count;
             $total['types'][$method] += $count;
-            $results[$name]['total'] += $count;
-            $results[$name]['types'][$method] += $count;
+            $results[$institution]['total'] += $count;
+            $results[$institution]['types'][$method] += $count;
         }
 
         array_unshift($results, $total);
-        return $results;
+        return array_values($results);
     }
 
     /**
@@ -168,6 +196,11 @@ class UserCountStatistics
                 "SUBSTRING_INDEX(`username`, ':', 1) IN (%s)",
                 implode(', ', array_fill(0, count($institutions), '?'))
             );
+        }
+
+        if ($this->maxAge !== null) {
+            $clauses[] = 'DATE_ADD(`last_login`, INTERVAL ? SECOND) > NOW()';
+            $params[] = $this->maxAge;
         }
 
         $where = count($clauses) === 0 ? '' : 'WHERE ' . implode(' AND ', $clauses);
