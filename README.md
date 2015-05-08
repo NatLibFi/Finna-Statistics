@@ -58,6 +58,9 @@ The `settings.json` file contains the following settings:
   * `hostname` : The database hostname
   * `database` : The name of the database
   * `table` : Name of the table that contains the user data
+  * `maxAge` : If included, the results contain additional rows for each
+    institution, which include the number of active accounts. The value
+    indicates the maximum number of seconds since last login.
   * `authMethods` : List of auth methods that are included in the statistics.
     Empty array can be used for all methods. (The order of columns in the
     results in not guaranteed, however).
