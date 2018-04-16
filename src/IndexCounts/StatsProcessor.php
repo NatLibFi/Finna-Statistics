@@ -1,7 +1,7 @@
 <?php
 /**
  * Finna statistics utility scripts.
- * Copyright (c) 2015 University Of Helsinki (The National Library Of Finland)
+ * Copyright (c) 2015-2018 University Of Helsinki (The National Library Of Finland)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author    Riikka Kalliomäki <riikka.kalliomaki@helsinki.fi>
- * @copyright 2015 University Of Helsinki (The National Library Of Finland)
+ * @author    Ere Maijala <ere.maijala@helsinki.fi>
+ * @copyright 2015-2018 University Of Helsinki (The National Library Of Finland)
  * @license   https://www.gnu.org/licenses/gpl-3.0.txt GPL-3.0
  */
 
@@ -188,7 +189,11 @@ class StatsProcessor
 
         $this->log("Initializing request: " . urldecode(http_build_query($params, '', '&')));
 
-        curl_setopt($curl, CURLOPT_URL, $this->url . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986));
+        $params['wt'] = 'xml';
+        $url = $this->url;
+        $url .= strpos($url, '?') !== false ? '&' : '?';
+        $url .= http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+        curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
         return $curl;
