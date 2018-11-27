@@ -1,0 +1,33 @@
+{
+  "piwik": {
+    "url": "",
+    "user_token": ""
+  },
+
+  "views": {
+    "base_dir": ""
+  },
+
+  "statistics": [
+    { "method": "API.get", "label": "Visitors", "flip": true },
+    { "method": "Actions.getSiteSearchCategories", "label": "Search types" },
+    { "method": "Actions.getPageUrls", "label": "Page views", "limit": 50 },
+    { "method": "Actions.getSiteSearchKeywords", "label": "Search terms", "limit": 100 },
+
+    { "method": "Referrers.getReferrerType", "label": "Referrers" },
+    { "method": "Referrers.getAll", "label": "Referring web pages", "limit": 100 },
+    { "method": "Referrers.getSocials", "label": "Referring social media" },
+
+    { "method": "Actions.getOutlinks", "label": "Outlinks", "limit": 100 },
+
+    { "method": "DevicesDetection.getBrowsers", "label": "Browsers" },
+    { "method": "DevicesDetection.getType", "label": "Devices" },
+    { "method": "Resolution.getResolution", "label": "Resolutions", "limit": 50 },
+
+    { "method": "UserCountry.getCountry", "label": "Visitors by country" },
+    { "method": "VisitTime.getByDayOfWeek", "label": "Visitors by day" },
+    { "method": "VisitTime.getVisitInformationPerServerTime", "label": "Visitors by hour" },
+    { "method": "VisitorInterest.getNumberOfVisitsPerVisitDuration", "label": "Visit duration" },
+    { "method": "VisitorInterest.getNumberOfVisitsPerPage", "label": "Page views"}
+  ]
+}
