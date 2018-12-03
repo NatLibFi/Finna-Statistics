@@ -45,4 +45,3 @@ foreach ($sites as $site) {
         $site['piwikId']
     ) . PHP_EOL;
 }
-

@@ -126,7 +126,10 @@ class ViewStatistics
      * @return void
      */
     public function getStatistics(
-        $date, $outputDir, $institutions = [], $piwikIds = []
+        $date,
+        $outputDir,
+        $institutions = [],
+        $piwikIds = []
     ) {
         $this->date = $date;
         $this->outputDir = $outputDir;
@@ -139,7 +142,7 @@ class ViewStatistics
                 $views,
                 function ($view) use ($field, $values) {
                     return in_array($view[$field], $values);
-                }    
+                }
             );
         };
         
@@ -150,7 +153,8 @@ class ViewStatistics
         $this->log(
             sprintf(
                 'Get statistics for %d sites, date: %s:',
-                count($views), $this->date
+                count($views),
+                $this->date
             )
         );
         
@@ -158,7 +162,9 @@ class ViewStatistics
             $this->log(
                 sprintf(
                     '  - %s/%s (Piwik id %s)',
-                    $view['institution'], $view['view'], $view['piwikId']
+                    $view['institution'],
+                    $view['view'],
+                    $view['piwikId']
                 )
             );
         }
@@ -168,7 +174,8 @@ class ViewStatistics
         $statNames = array_map(
             function ($stat) {
                 return $stat['label'];
-            }, $this->statsConf
+            },
+            $this->statsConf
         );
 
         $cnt = 0;
@@ -186,19 +193,26 @@ class ViewStatistics
                 }
                 $statSettings[] = $stat;
                 $viewQueries[] = $this->getQueryParameters(
-                    $id, $stat['method'], $stat['limit'] ?? $this->limit
+                    $id,
+                    $stat['method'],
+                    $stat['limit'] ?? $this->limit
                 );
 
                 list($apiModule, $apiMethod) = explode('.', $stat['method']);
                 $metadataQueries[] = $this->getMetadataQueryParameters(
-                    $id, $apiModule, $apiMethod
+                    $id,
+                    $apiModule,
+                    $apiMethod
                 );
             }
 
             $this->log(
                 sprintf(
                     'Fetching statistics for site %s/%s (%d of %d)',
-                    $view['institution'], $view['view'], $cnt, count($views)
+                    $view['institution'],
+                    $view['view'],
+                    $cnt,
+                    count($views)
                 )
             );
 
@@ -214,7 +228,8 @@ class ViewStatistics
                 if (isset($metadata->result) && $metadata->result === 'error') {
                     $this->log(
                         sprintf(
-                            '  error fetching metadata: %s', $metadata->message
+                            '  error fetching metadata: %s',
+                            $metadata->message
                         )
                     );
                     $metadata = $metadataResult = null;
@@ -230,9 +245,10 @@ class ViewStatistics
             }
             
             $results[$id] = array_combine(
-                $statNames, $data
-            );
+                $statNames,
             
+                $data
+            );
         }
         $this->processResults($results, $views);
     }
@@ -275,17 +291,23 @@ class ViewStatistics
             $this->log(
                 sprintf(
                     'Generating report for site %s/%s (%d of %d)',
-                    $view['institution'], $view['view'], $viewCnt, count($results)
+                    $view['institution'],
+                    $view['view'],
+                    $viewCnt,
+                    count($results)
                 )
             );
 
             $sheetInfo = $this->getSheetInfo(
-                $view['institution'], $view['view'], $this->date
+                $view['institution'],
+                $view['view'],
+                $this->date
             );
 
             $doc = $this->createSpreadsheet();
             $this->addCoverSheet(
-                $doc, $view['institution'],
+                $doc,
+                $view['institution'],
                 $view['view'],
                 $this->date,
                 array_values($statistics)[0]['metadata']
@@ -338,7 +360,9 @@ class ViewStatistics
                     $fname .= '-' . $view['view'];
                 }
                 $fname = sprintf(
-                    '%s/statistics-%s', $this->outputDir, $fname
+                    '%s/statistics-%s',
+                    $this->outputDir,
+                    $fname
                 );
                 $doc->setActiveSheetIndex(0);
                 $this->saveSpreadsheet($doc, $fname);
@@ -419,8 +443,12 @@ class ViewStatistics
         $end = date_parse(trim($end));
         $period = sprintf(
             '%d.%d.%d - %d.%d.%d',
-            $start['day'], $start['month'], $start['year'],
-            $end['day'], $end['month'], $end['year'] 
+            $start['day'],
+            $start['month'],
+            $start['year'],
+            $end['day'],
+            $end['month'],
+            $end['year']
         );
         $url = "${institution}.finna.fi";
         if ($view !== 'default') {
@@ -451,7 +479,8 @@ class ViewStatistics
         }
         if (!empty($metadata['metricsDocumentation'])) {
             $documentation= array_merge(
-                $documentation, (array)$metadata['metricsDocumentation']
+                $documentation,
+                (array)$metadata['metricsDocumentation']
             );
         }
 
@@ -480,7 +509,7 @@ class ViewStatistics
             $ind += 2;
             $sheet->getCell("A${ind}")
                 ->setValue('For more info see: https://glossary.matomo.org/');
-        }        
+        }
     }
 
     /**
@@ -529,7 +558,6 @@ class ViewStatistics
                         
                 // Number format cells
                 $cells->getNumberFormat()->setFormatCode('# ### ##0');
-                        
             }
         }
         return $sheet;
@@ -542,7 +570,7 @@ class ViewStatistics
      * @param string      $filename File name
 
      * @return void
-     */    
+     */
     protected function saveSpreadsheet($doc, $filename)
     {
         $filename .= '.xlsx';
@@ -559,7 +587,7 @@ class ViewStatistics
      * @param int    $limit  Limit
      *
      * @return array
-     */    
+     */
     protected function getQueryParameters($id, $method, $limit)
     {
         return [
@@ -585,7 +613,7 @@ class ViewStatistics
      * @param string $method Method
      *
      * @return array
-     */    
+     */
     protected function getMetadataQueryParameters($id, $module, $method)
     {
         return [
@@ -666,7 +694,8 @@ class ViewStatistics
             $this->log(
                 sprintf(
                     '  Executed %d requests in %d ms',
-                    count($queries), (microtime(true) - $timer) * 1000
+                    count($queries),
+                    (microtime(true) - $timer) * 1000
                 )
             );
         }

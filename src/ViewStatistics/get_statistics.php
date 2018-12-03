@@ -74,17 +74,17 @@ foreach ($arguments as $arg) {
     $name = substr($name, 2);
     if ($name === 'date') {
         $date = $val;
-    } else if ($name === 'institutions') {
+    } elseif ($name === 'institutions') {
         $institutions = explode(',', $val);
-    } else if ($name == 'ids') {
+    } elseif ($name == 'ids') {
         $ids = explode(',', $val);
-    } else if ($name == 'output') {
+    } elseif ($name == 'output') {
         $val = realpath($val);
         if (!is_dir($val)) {
             error("Non-existing output-dir: $val");
         }
         $outputDir = $val;
-    } else if ($name == 'debug') {
+    } elseif ($name == 'debug') {
         $stats->setDebug(true);
     } else {
         error("Unknown argument: $arg");
