@@ -175,14 +175,14 @@ class UserCountStatistics
             $clause = [];
 
             if (($key = array_search(null, $methods, true)) !== false) {
-                $clause[] = '`finna_auth_method` IS NULL';
+                $clause[] = '`auth_method` IS NULL';
                 unset($methods[$key]);
             }
 
             if ($methods !== []) {
                 $params = array_merge($params, $methods);
                 $clause[] = sprintf(
-                    "`finna_auth_method` IN (%s)",
+                    "`auth_method` IN (%s)",
                     implode(', ', array_fill(0, count($methods), '?'))
                 );
             }
@@ -199,17 +199,17 @@ class UserCountStatistics
         }
 
         if ($this->maxAge !== null) {
-            $clauses[] = 'DATE_ADD(`finna_last_login`, INTERVAL ? SECOND) > NOW()';
+            $clauses[] = 'DATE_ADD(`last_login`, INTERVAL ? SECOND) > NOW()';
             $params[] = $this->maxAge;
         }
 
         $where = count($clauses) === 0 ? '' : 'WHERE ' . implode(' AND ', $clauses);
 
         $sql = "
-            SELECT SUBSTRING_INDEX(`username`, ':', 1), `finna_auth_method`, COUNT(*)
+            SELECT SUBSTRING_INDEX(`username`, ':', 1), `auth_method`, COUNT(*)
             FROM `$this->table`
             $where
-            GROUP BY SUBSTRING_INDEX(`username`, ':', 1), `finna_auth_method`
+            GROUP BY SUBSTRING_INDEX(`username`, ':', 1), `auth_method`
         ";
 
         return [$sql, $params];
