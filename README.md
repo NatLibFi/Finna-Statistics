@@ -66,3 +66,42 @@ The `settings.json` file contains the following settings:
     results in not guaranteed, however).
   * `institutions` : List of institutions included in the statistics. Empty
     array can be used for all institutions.
+
+### View statistics ###
+
+Usage `php src/ViewStatistics/get_statistics.php <settings-file> --date=<period> --ids=<Piwik ids> --institution=<institution names> --output=<output-dir> --debug`
+
+This script fetches statistics for views and generates Excel files of them.
+
+The `<settings-file>` path should point to a json file that contains the
+statistic settings. See `src/ViewStatistics/settings.json` for sample configuration.
+
+The results for a view will be collected to a Excel spreadsheet document, each Piwik call placed on its own worksheet.
+
+The list of views is collected by traversing the view root directory and checking for each found view that:
+- the view is not disabled
+- Piwik site id is defined in <view-dir>/local/config/vufind.ini
+
+To list all views run
+
+`php src/ViewStatistics/list_views.php <settings-file>`
+
+#### Configuration ####
+
+The `settings.json` file contains the following settings:
+
+  * `piwik` : Piwik URL and user token
+  * `views` : Base directory for all views
+  * `statistics` : List of Piwik API calls with the following parameters:
+  *                  `method`: Piwik API method name
+  *                  `label`:  Worksheet label
+  *                  `limit`:  Optional limit for result rows
+  *                  `flip`:   Should the table rows and columns be flipped (default false)
+
+#### Startup parameters #####
+
+* `--date` : Report period in YYYY-MM-DD,YYYY-MM-DD format
+* `--ids` : Piwik ids to generate reports for (example: --ids=1,2,3)
+* `--institutions` : Institution names to generate reports for (example: --institutions=foo.bar)
+* `--output` : Path to the output directory where the Excel files are saved
+* `--debug` : Print debug info to console
