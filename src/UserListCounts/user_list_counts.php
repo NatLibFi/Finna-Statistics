@@ -14,16 +14,5 @@ $settings = new \Finna\Stats\Utility\SettingsFile($argv[1]);
 $db = $settings->loadDatabase();
 
 $stats = new \Finna\Stats\UserCounts\UserListCountStatistics($db, $settings['table']);
-$stats->setAuthMethods($settings['authMethods']);
 
-// Add statistics rows for active accounts
-if (!empty($settings['maxAge'])) {
-    $stats->setMaxAge($settings['maxAge']);
-    $active = $stats->getAccountsByOrganisation($settings['institutions']);
-
-    foreach ($active as $key => $values) {
-        $active[$key]['name'] = $values['name'] . ' - active';
-    }
-
-    $results = array_merge($results, $active);
-}
+$stats->getUserListStats();

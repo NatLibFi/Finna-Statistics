@@ -14,6 +14,8 @@ class UserListCountStatistics extends ConnectorAbstract
             FROM $this->table
         ");
         $stmt->execute();
-        $names = $stmt->fetch();
+        $result = $stmt->fetch();
+
+        var_dump($result);
     }
 }

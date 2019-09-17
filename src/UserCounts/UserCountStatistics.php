@@ -29,6 +29,36 @@ require_once __DIR__ . '/../Abstracts/ConnectorAbstract.php';
  */
 class UserCountStatistics extends ConnectorAbstract
 {
+    /** @var string[] List of authentication methods retrieved from the database */
+    private $authMethods;
+
+    /** @var int|null Maximum number of seconds since last login or null for no limit */
+    private $maxAge;
+
+    public function __construct(\PDO $pdo, $table = 'user')
+    {
+        parent::__construct($pdo, $table);
+        $this->authMethods = [];
+    }
+
+    /**
+     * Sets the maximum number of seconds since last login for counted accounts.
+     * @param int|null $seconds Maximum number of seconds since last login or null for no limit
+     */
+    public function setMaxAge($seconds)
+    {
+        $this->maxAge = $seconds === null ? null : (int) $seconds;
+    }
+
+    /**
+     * Sets the authentication methods to look for in the database
+     * @param string[] $authMethods Authentication methods to look for
+     */
+    public function setAuthMethods(array $authMethods)
+    {
+        $this->authMethods = $authMethods;
+    }
+
     /**
      * Returns a list of authenticated methods used in the user table.
      * @return string[] List of authentication methods in the database
