@@ -3,7 +3,7 @@
 namespace Finna\Stats\UserListCounts;
 require_once __DIR__ . '/../Abstracts/ConnectorAbstract.php';
 
-class UserListCountStatistics extends ConnectorAbstract
+class UserListCountStatistics extends Finna\Stats\Abstracts\ConnectorAbstract
 {
     //SELECT COUNT(*) AS count, SUM(CASE WHEN public = 1 THEN 1 ELSE 0 END) FROM user_list
     public function getUserListStats()
