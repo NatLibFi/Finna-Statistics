@@ -25,11 +25,11 @@ class UserListCountStatistics
     {
         $stmt = $this->pdo->query("
             SELECT COUNT(*) AS count,
-            SUM(CASE WHEN public = 1 THEN 1 ELSE 0 END)
+            SUM(CASE WHEN public = 1 THEN 1 ELSE 0 END) as public
             FROM $this->table
         ");
         $stmt->execute();
-        $result = $stmt->fetch();
+        $result = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
         var_dump($result);
     }
