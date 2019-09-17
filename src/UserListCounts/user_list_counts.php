@@ -13,6 +13,6 @@ if (empty($argv[1]) || empty($argv[2])) {
 $settings = new \Finna\Stats\Utility\SettingsFile($argv[1]);
 $db = $settings->loadDatabase();
 
-$stats = new \Finna\Stats\UserCounts\UserListCountStatistics($db, $settings['table']);
+$stats = new \Finna\Stats\UserListCounts\UserListCountStatistics($db, $settings['table']);
 
 $stats->getUserListStats();
