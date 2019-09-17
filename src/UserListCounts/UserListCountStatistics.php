@@ -29,7 +29,7 @@ class UserListCountStatistics
             FROM $this->table
         ");
         $stmt->execute();
-        $result = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         var_dump($result);
     }
