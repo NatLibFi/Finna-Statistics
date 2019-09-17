@@ -22,54 +22,13 @@
  */
 
 namespace Finna\Stats\UserCounts;
+require_once __DIR__ . '/../Abstracts/ConnectorAbstract.php';
 
 /**
  * Generates statistics about user accounts.
  */
-class UserCountStatistics
+class UserCountStatistics extends ConnectorAbstract
 {
-    /** @var \PDO The PDO instance used to access the user database. */
-    private $pdo;
-
-    /** @var string Name of the table containing the user data */
-    private $table;
-
-    /** @var string[] List of authentication methods retrieved from the database */
-    private $authMethods;
-
-    /** @var int|null Maximum number of seconds since last login or null for no limit */
-    private $maxAge;
-
-    /**
-     * Creates a new instance of UserCountStatistics.
-     * @param \PDO $pdo The connection used to access the user database
-     * @param string $table Name of the table containing the user data
-     */
-    public function __construct(\PDO $pdo, $table = 'user')
-    {
-        $this->pdo = $pdo;
-        $this->table = $table;
-        $this->authMethods = [];
-    }
-
-    /**
-     * Sets the maximum number of seconds since last login for counted accounts.
-     * @param int|null $seconds Maximum number of seconds since last login or null for no limit
-     */
-    public function setMaxAge($seconds)
-    {
-        $this->maxAge = $seconds === null ? null : (int) $seconds;
-    }
-
-    /**
-     * Sets the authentication methods to look for in the database
-     * @param string[] $authMethods Authentication methods to look for
-     */
-    public function setAuthMethods(array $authMethods)
-    {
-        $this->authMethods = $authMethods;
-    }
-
     /**
      * Returns a list of authenticated methods used in the user table.
      * @return string[] List of authentication methods in the database
