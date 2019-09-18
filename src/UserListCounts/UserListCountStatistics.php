@@ -43,9 +43,12 @@ class UserListCountStatistics
 
     public function getUserListStats()
     {
-        $sql = 'SELECT COUNT(*) as count, SUM(CASE WHEN public = 1 THEN 1 ELSE 0 END) as public FROM :table';
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':table' => $this->table]);
+        $stmt = $this->pdo->query("
+            SELECT COUNT(*) AS count,
+            SUM(CASE WHEN public = 1 THEN 1 ELSE 0 END) as public
+            FROM $this->table
+        ");
+        $stmt->execute();
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return $result;

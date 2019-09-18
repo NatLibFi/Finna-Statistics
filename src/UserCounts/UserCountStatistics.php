@@ -28,20 +28,20 @@ namespace Finna\Stats\UserCounts;
  */
 class UserCountStatistics
 {
-    /** @var string[] List of authentication methods retrieved from the database */
-    private $authMethods;
-
-    /** @var int|null Maximum number of seconds since last login or null for no limit */
-    private $maxAge;
-
     /** @var \PDO The PDO instance used to access the correct database. */
     private $pdo;
 
     /** @var string Name of the table containing the correct data */
     private $table;
 
+    /** @var string[] List of authentication methods retrieved from the database */
+    private $authMethods;
+
+    /** @var int|null Maximum number of seconds since last login or null for no limit */
+    private $maxAge;
+
     /**
-     * Creates a new instance of ConnectorAbstract.
+     * Creates a new instance of UserCountStatistics.
      * @param \PDO $pdo The connection used to access the user database
      * @param string $table Name of the table containing the user data
      */
