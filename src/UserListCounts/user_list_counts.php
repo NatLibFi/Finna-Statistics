@@ -22,7 +22,7 @@
  */
 
 error_reporting(E_ALL);
-date_default_timezone_set('Europe\Helsinki');
+date_default_timezone_set('Europe/Helsinki');
 
 require_once __DIR__ . '/UserListCountStatistics.php';
 require_once __DIR__ . '/../Utility/SettingsFile.php';
