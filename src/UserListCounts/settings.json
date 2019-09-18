@@ -3,11 +3,5 @@
   "password" : "",
   "hostname" : "localhost",
   "database" : "vufind",
-
-  "table" : "user_list",
-
-  "maxAge" : 2592000,
-  "authMethods" : [
-    "MozillaPersona"
-  ]
+  "table" : "user_list"
 }
