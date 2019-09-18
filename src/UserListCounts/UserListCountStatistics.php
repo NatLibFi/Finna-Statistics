@@ -46,7 +46,7 @@ class UserListCountStatistics
         $sql = "SELECT COUNT(*) AS count, " .
             "SUM(CASE WHEN public = 1 THEN 1 ELSE 0 END) as public " .
             "FROM :table";
-        $stmt = $this->pdo-prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':table' => $this->table]);
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
