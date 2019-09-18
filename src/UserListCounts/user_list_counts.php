@@ -36,6 +36,8 @@ $db = $settings->loadDatabase();
 
 $stats = new \Finna\Stats\UserListCounts\UserListCountStatistics($db, $settings['table']);
 $result = $stats->getUserListStats();
+$time = ["time" => date("d.m.Y")];
+$result = array_merge($time, $result);
 
 $handle = fopen($argv[2], 'a');
 fputcsv($handle, $result);
