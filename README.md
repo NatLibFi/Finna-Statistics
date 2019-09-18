@@ -49,6 +49,20 @@ the command:
 
 `php src/UserCounts/list_methods.php <settings-file>`
 
+### User list statistics ###
+
+Usage `php src/UserListCounts/user_list_counts.php <settings-file> <output-file>`
+
+The script returns the amount of lists made by users and how many of those lists
+are public.
+
+The `<settings-file>` path should point to a json file that contains the
+counting settings. See `src/UserListCounts/settings.json` for sample configuration.
+
+The results will be appended as CSV rows to the provided `<output-file>` path.
+Each result row contains timestamps in format `UTC+0` with fields `total` and 
+`public` amount of lists.
+
 #### Configuration ####
 
 The `settings.json` file contains the following settings:
