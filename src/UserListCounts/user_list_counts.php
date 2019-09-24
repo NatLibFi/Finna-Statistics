@@ -45,7 +45,7 @@ $handle = fopen($argv[2], 'a');
 if ($handle !== false) {
     $success = fputcsv($handle, $result);
     if ($success === false) {
-        trigger_error('Failed to write line to file', E_USER_WARNING);
+        trigger_error('Failed to write line to file in user_list_counts.php', E_USER_WARNING);
     }
     fclose($handle);
 }

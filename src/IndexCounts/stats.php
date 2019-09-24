@@ -40,7 +40,15 @@ $processor->setQueries($settings['queries']);
 $results = $processor->processFilterQueries($settings['filterSets']);
 
 $handle = fopen($argv[2], 'a');
-foreach ($results as $row) {
-    fputcsv($handle, $row);
+
+// E_WARNING is being emitted on false
+if ($handle !== false) {
+    foreach ($results as $row) {
+        $success = fputcsv($handle, $row);
+        if ($success === false) {
+            trigger_error('Failed to write line to file in stats.php', E_USER_WARNING);
+        } 
+    }
+    fclose($handle);
 }
-fclose($handle);
+
