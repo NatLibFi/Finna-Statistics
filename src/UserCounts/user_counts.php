@@ -62,7 +62,7 @@ if ($handle !== false) {
             array_values($result['types'])
         ));
         if ($success === false) {
-            echo "Failed to write line to file";
+            trigger_error('Failed to write line to file', E_USER_WARNING);
         }
     }
     fclose($handle);

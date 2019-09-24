@@ -45,7 +45,7 @@ $handle = fopen($argv[2], 'a');
 if ($handle !== false) {
     $success = fputcsv($handle, $result);
     if ($success === false) {
-        echo "Failed to write line to file";
+        trigger_error('Failed to write line to file', E_USER_WARNING);
     }
     fclose($handle);
 }
