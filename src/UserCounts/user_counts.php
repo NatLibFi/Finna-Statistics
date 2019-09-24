@@ -54,11 +54,16 @@ if (!empty($settings['maxAge'])) {
 // Save results in a csv file
 $handle = fopen($argv[2], 'a');
 
-foreach ($results as $result) {
-    fputcsv($handle, array_merge(
-        [$result['date'], $result['name'], $result['total']],
-        array_values($result['types'])
-    ));
+// E_WARNING is being emitted on false
+if ($handle !== false) {
+    foreach ($results as $result) {
+        $success = fputcsv($handle, array_merge(
+            [$result['date'], $result['name'], $result['total']],
+            array_values($result['types'])
+        ));
+        if ($success === false) {
+            echo "Failed to write line to file";
+        }
+    }
+    fclose($handle);
 }
-
-fclose($handle);

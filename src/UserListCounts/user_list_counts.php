@@ -40,5 +40,12 @@ $time = ["time" => date("Y-m-d\TH:i:sP")];
 $result = array_merge($time, $result);
 
 $handle = fopen($argv[2], 'a');
-fputcsv($handle, $result);
-fclose($handle);
+
+// E_WARNING is being emitted on false
+if ($handle !== false) {
+    $success = fputcsv($handle, $result);
+    if ($success === false) {
+        echo "Failed to write line to file";
+    }
+    fclose($handle);
+}
