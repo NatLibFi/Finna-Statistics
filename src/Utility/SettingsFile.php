@@ -34,7 +34,7 @@ class SettingsFile implements \ArrayAccess
     /**
      * Settings file with all the settings reguired
      */
-    private $settings;
+    private $settings = [];
 
     /**
      * Loads a settings file to memory and handles the values
