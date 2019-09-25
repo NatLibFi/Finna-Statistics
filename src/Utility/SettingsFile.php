@@ -43,14 +43,14 @@ class SettingsFile implements \ArrayAccess
     public function __construct()
     {
         if (!file_exists($this->filename)) {
-            throw new \InvalidArgumentException("The settings file '$filename' does not exist'");
+            throw new \InvalidArgumentException("The settings file '$this->filename' does not exist'");
         }
 
-        if (!is_readable($filename)) {
-            throw new \RuntimeException("Cannot read the settings file '$filename'");
+        if (!is_readable($this->filename)) {
+            throw new \RuntimeException("Cannot read the settings file '$this->filename'");
         }
 
-        $settings = json_decode(file_get_contents($filename), true);
+        $settings = json_decode(file_get_contents($this->filename), true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new \RuntimeException("Error parsing settings: " . json_last_error_msg());
