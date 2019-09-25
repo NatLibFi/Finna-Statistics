@@ -1,0 +1,45 @@
+{
+    "db" : {
+        "username" : "",
+        "password" : "",
+        "hostname" : "localhost",
+        "database" : "vufind"
+    },
+    "UserCount" : {
+        "table" : "user",
+  
+        "maxAge" : 2592000,
+        "authMethods" : [
+          "MozillaPersona"
+        ],
+      
+        "institutions" : [
+        ]
+    },
+    "UserListCount" : {
+        "table" : "user_list"
+    },
+    "StatsProcessor" : {
+        "url" : "https://solr.finna.fi/solr/biblio/select",
+
+        "filters" : {
+            "not-automated" : "-merged_boolean:TRUE",
+            "online" : "online_str_mv:*"
+        },
+
+        "filterSets" : [
+            [],
+            ["not-automated"],
+            ["online"],
+            ["not-automated", "online"]
+        ],
+
+        "queries" : [
+            "*:*"
+        ]
+    },
+    "comments" : [
+        "Database connection can be overwritten with adding a property db : to a specific object",
+        "db : {'username': '', 'password' : '', 'hostname' : '', 'database': ''}"
+    ]
+  }

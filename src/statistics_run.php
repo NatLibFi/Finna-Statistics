@@ -24,30 +24,22 @@
 error_reporting(E_ALL);
 date_default_timezone_set('UTC');
 
-require_once __DIR__ . '/UserListCountStatistics.php';
-require_once __DIR__ . '/../Utility/SettingsFile.php';
+require_once __DIR__ . '/Utility/SettingsFile.php';
 
-if (empty($argv[1]) || empty($argv[2])) {
-    die('Usage user_list_counts.php <settings-file> <output-file>');
+if (count($argv) === 1) {
+    echo "Currently usable arguments are located in /Settings/settings.json as key";
+    echo "Case sensitive. Example; to run User Count and User List Count:";
+    die('Usage statistics_run.php UserCount UserListCount');
 }
 
-$settings = new \Finna\Stats\Utility\SettingsFile($argv[1]);
-$db = $settings->loadDatabase();
+// Lets create an object of settingshandler
+$settings = new \Finna\Stats\Utility\SettingsFile();
 
-$stats = new \Finna\Stats\UserListCounts\UserListCountStatistics($db, $settings['table']);
-$result = $stats->getUserListStats();
-$time = ["time" => date("Y-m-d\TH:i:sP")];
-$result = array_merge($time, $result);
-
-$handle = fopen($argv[2], 'a');
-
-// E_WARNING is being emitted on false
-if ($handle !== false) {
-    $success = fputcsv($handle, $result);
-    if ($success === false) {
-        trigger_error('Failed to write line to file: ' . $argv[2], E_USER_WARNING);
-    }
-    if (fclose($handle) === false) {
-        trigger_error('Failed to close file: ' . $argv[2], E_USER_WARNING);
-    }
+for ($i = 1; i < count($argv); $i++) {
+    // Lets start looping, first require needed php file
+    require_once(__DIR__ . "//Controllers//" . $argv[$i] . '.php');
+    $name = '\\Finna\\Stats\\' . $argv[$i];
+    $pdo = $settings->loadDatabase($argv[$i]);
+    $obj = new $name($pdo, $settings->offsetGet($argv[$i]));
+    $obj->run();
 }

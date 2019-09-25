@@ -20,34 +20,22 @@
  * @copyright 2019 University Of Helsinki (The National Library Of Finland)
  * @license   https://www.gnu.org/licenses/gpl-3.0.txt GPL-3.0
  */
+namespace Finna\Stats\UserListCounts;
 
-error_reporting(E_ALL);
-date_default_timezone_set('UTC');
+use Finna\Stats\BaseAbstract as Base;
 
-require_once __DIR__ . '/UserListCountStatistics.php';
-require_once __DIR__ . '/../Utility/SettingsFile.php';
+class UserListCountController extends Base
+{
+    public function run()
+    {
+        $stmt = $this->pdo->query("
+            SELECT COUNT(*) AS count,
+            SUM(CASE WHEN public = 1 THEN 1 ELSE 0 END) as public
+            FROM $this->table
+        ");
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-if (empty($argv[1]) || empty($argv[2])) {
-    die('Usage user_list_counts.php <settings-file> <output-file>');
-}
-
-$settings = new \Finna\Stats\Utility\SettingsFile($argv[1]);
-$db = $settings->loadDatabase();
-
-$stats = new \Finna\Stats\UserListCounts\UserListCountStatistics($db, $settings['table']);
-$result = $stats->getUserListStats();
-$time = ["time" => date("Y-m-d\TH:i:sP")];
-$result = array_merge($time, $result);
-
-$handle = fopen($argv[2], 'a');
-
-// E_WARNING is being emitted on false
-if ($handle !== false) {
-    $success = fputcsv($handle, $result);
-    if ($success === false) {
-        trigger_error('Failed to write line to file: ' . $argv[2], E_USER_WARNING);
-    }
-    if (fclose($handle) === false) {
-        trigger_error('Failed to close file: ' . $argv[2], E_USER_WARNING);
+        return $result;
     }
 }

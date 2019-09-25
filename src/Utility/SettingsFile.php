@@ -29,45 +29,48 @@ namespace Finna\Stats\Utility;
 class SettingsFile implements \ArrayAccess
 {
     /** @var string Path to the settings file */
-    private $filename;
+    private $filename = __DIR__ . '/../Settings/settings.json';
 
-    /** @var array Settings read from the settings file */
+    /**
+     * Settings file with all the settings reguired
+     */
     private $settings;
 
     /**
-     * Creates a new instance of SettingsFile and reads the settings from the file.
+     * Loads a settings file to memory and handles the values
      * @param string $file Path to the settings file
      */
-    public function __construct($file)
+    public function __construct()
     {
-        if (!file_exists($file)) {
-            throw new \InvalidArgumentException("The settings file '$file' does not exist'");
+        if (!file_exists($this->filename)) {
+            throw new \InvalidArgumentException("The settings file '$filename' does not exist'");
         }
 
-        if (!is_readable($file)) {
-            throw new \RuntimeException("Cannot read the settings file '$file'");
+        if (!is_readable($filename)) {
+            throw new \RuntimeException("Cannot read the settings file '$filename'");
         }
 
-        $settings = json_decode(file_get_contents($file), true);
+        $settings = json_decode(file_get_contents($filename), true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new \RuntimeException("Error parsing settings: " . json_last_error_msg());
         }
 
-        $this->filename = $file;
-        $this->settings = $settings;
+        $this->$settings = $settings;
     }
 
     /**
      * Creates a PDO instance using settings from the file
      * @return \PDO Database connection created from the settings
      */
-    public function loadDatabase()
+    public function loadDatabase($identifier = '')
     {
+        $pointer = $this[$identifier]['db'] ?? $this['db'];
+
         $pdo = new \PDO(
-            sprintf("mysql:dbname=%s;host=%s;charset=utf8", $this['database'], $this['hostname']),
-            $this['username'],
-            $this['password'],
+            sprintf("mysql:dbname=%s;host=%s;charset=utf8", $pointer['database'], $pointer['hostname']),
+            $pointer['username'],
+            $pointer['password'],
             [
                 \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
                 \PDO::MYSQL_ATTR_INIT_COMMAND => "SET time_zone = '" . date('P') . "'",
@@ -77,6 +80,12 @@ class SettingsFile implements \ArrayAccess
         $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
 
         return $pdo;
+    }
+
+    public function getPath($identifier)
+    {
+        $pointer = $this[$identifier]['path'];
+        return $pointer;
     }
 
     /**
