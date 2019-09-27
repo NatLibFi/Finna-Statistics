@@ -20,4 +20,6 @@ abstract class BaseAbstract
     }
 
     public abstract function run();
+
+    public abstract function processResults($results);
 }

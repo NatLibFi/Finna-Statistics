@@ -41,5 +41,8 @@ for ($i = 1; $i < count($argv); $i++) {
     $name = '\\Finna\\Stats\\' . $argv[$i] . '\\' . $argv[$i] . 'Controller';
     $pdo = $settings->loadDatabase($argv[$i]);
     $obj = new $name($pdo, $settings->offsetGet($argv[$i]));
-    $obj->run();
+    $result = $obj->run();
+    if ($result) {
+        $obj->processResults($result);
+    }
 }

@@ -41,16 +41,16 @@ class UserListCountController extends Base
         return $result;
     }
 
-    public function processFile($result)
+    public function processResults($results)
     {
         $time = ["time" => date("Y-m-d\TH:i:sP")];
-        $result = array_merge($time, $result);
+        $result = array_merge($time, $results);
 
         $handle = fopen($this->output, 'a');
 
         // E_WARNING is being emitted on false
         if ($handle !== false) {
-            $success = fputcsv($handle, $result);
+            $success = fputcsv($handle, $results);
             if ($success === false) {
                 trigger_error('Failed to write line to file: ' . $this->output, E_USER_WARNING);
             }
