@@ -42,17 +42,20 @@ class StatsProcessorController extends Base
     /** @var string[] List of custom queries that will be performed */
     private $queries;
 
+    private $filterSets = [];
+
     public function __construct(\PDO $pdo, $settings)
     {
         parent::__construct($pdo, $settings);
         $this->url = (string)$settings['url'];
         $this->filters = $settings['filters'];
         $this->queries = $settings['queries'];
+        $this->filterSets = $settings['filterSets'];
     }
 
     public function run()
     {
-        $results = $processor->processFilterQueries($settings['filterSets']);
+        $results = $this->processFilterQueries($this->filterSets);
         return $results;
     }
 
