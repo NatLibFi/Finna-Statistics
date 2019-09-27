@@ -44,5 +44,7 @@ for ($i = 1; $i < count($argv); $i++) {
     $result = $obj->run();
     if ($result) {
         $obj->processResults($result);
+    } else {
+        echo $result;
     }
 }
