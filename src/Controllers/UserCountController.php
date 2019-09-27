@@ -23,7 +23,8 @@
 
 namespace Finna\Stats\UserCounts;
 
-use Finna\Stats\BaseAbstract as Base;
+require_once(__DIR__ . '/../Abstracts/BaseAbstract.php');
+use Finna\Stats\BaseAbstract\BaseAbstract as Base;
 
 /**
  * Generates statistics about user accounts.
