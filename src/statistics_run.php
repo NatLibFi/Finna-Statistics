@@ -26,25 +26,33 @@ date_default_timezone_set('UTC');
 
 require_once __DIR__ . '/Utility/SettingsFile.php';
 
-if (count($argv) === 1) {
-    echo "Currently usable arguments are located in /Settings/settings.json as key";
-    echo "Case sensitive. Example; to run User Count and User List Count:";
-    die('Usage statistics_run.php UserCount UserListCount');
-}
-
 // Lets create an object of settingshandler
 $settings = new \Finna\Stats\Utility\SettingsFile();
+$properArguments = $settings->getProperArguments();
+
+if (count($argv) === 1) {
+    echo "No arguments given. Usage statistics_run.php Argument1 Argument2" . PHP_EOL;
+    echo "Proper arguments are: " . PHP_EOL;
+    foreach ($properArguments as $argument) {
+        echo $argument . PHP_EOL;
+    }
+    die();
+}
 
 for ($i = 1; $i < count($argv); $i++) {
-    // Lets start looping, first require needed php file
-    require_once(__DIR__ . '/Controllers/' . $argv[$i] . 'Controller.php');
-    $name = '\\Finna\\Stats\\' . $argv[$i] . '\\' . $argv[$i] . 'Controller';
-    $pdo = $settings->loadDatabase($argv[$i]);
-    $obj = new $name($pdo, $settings->offsetGet($argv[$i]));
-    $result = $obj->run();
-    if ($result) {
-        $obj->processResults($result);
+    if (in_array($argv[$i], $properArguments)) {
+        require_once(__DIR__ . '/Controllers/' . $argv[$i] . 'Controller.php');
+        $name = '\\Finna\\Stats\\' . $argv[$i] . '\\' . $argv[$i] . 'Controller';
+        if (class_exists($name)) {
+            echo "Class exists properly";
+        }
+        $pdo = $settings->loadDatabase($argv[$i]);
+        $obj = new $name($pdo, $settings->offsetGet($argv[$i]));
+        $result = $obj->run();
+        if ($result) {
+            $obj->processResults($result);
+        }
     } else {
-        echo $result;
+        echo 'Argument ' . $argv[$i] . ' is not a proper argument.';
     }
 }

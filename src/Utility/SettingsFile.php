@@ -57,6 +57,18 @@ class SettingsFile implements \ArrayAccess
         $this->settings = $settings;
     }
 
+    public function getProperArguments()
+    {
+        $arguments = [];
+        foreach ($this->settings as $key => $value) {
+            if ($key === 'comments' || $key === 'db') {
+                continue;
+            }
+            $arguments[] = $key;
+        }
+        return $arguments;
+    }
+
     /**
      * Creates a PDO instance using settings from the file
      * @return \PDO Database connection created from the settings

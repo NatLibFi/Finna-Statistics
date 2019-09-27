@@ -42,6 +42,7 @@ class StatsProcessorController extends Base
     /** @var string[] List of custom queries that will be performed */
     private $queries;
 
+    /** @var string[] List of filter sets */
     private $filterSets = [];
 
     public function __construct(\PDO $pdo, $settings)
@@ -53,12 +54,22 @@ class StatsProcessorController extends Base
         $this->filterSets = $settings['filterSets'];
     }
 
+    /**
+     * Runs the desired code to fetch data
+     * 
+     * @return array Returns the response of query/queries
+     */
     public function run()
     {
         $results = $this->processFilterQueries($this->filterSets);
         return $results;
     }
 
+    /**
+     * Process given results, triggers a user warning if file can not be read
+     * 
+     * @param array $results, given results
+     */
     public function processResults($results)
     {
         $handle = fopen($this->output, 'a');
