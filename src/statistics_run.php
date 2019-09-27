@@ -43,11 +43,17 @@ for ($i = 1; $i < count($argv); $i++) {
     $arg = $argv[$i];
     if (in_array($arg, $properArguments)) {
         $file = __DIR__ . '/Controllers/' . $arg . 'Controller.php';
-        $name = '\\Finna\\Stats\\' . $arg . '\\' . $arg . 'Controller';
-        if (!file_exists($file) || !class_exists($name)) {
+        $name = '\\Finna\\Stats\\Controllers\\' . $arg . 'Controller';
+
+        if (!file_exists($file)) {
             trigger_error("$file does not exist. Please check Settings/settings.json.", E_USER_WARNING);
         } else {
             require_once($file);
+        }
+
+        if (!class_exists($name)) {
+            trigger_error("$name does not exist. Please check Settings/settings.json.", E_USER_WARNING);
+        } else {
             $pdo = $settings->loadDatabase($arg);
             $obj = new $name($pdo, $settings->offsetGet($arg));
             $result = $obj->run();

@@ -22,7 +22,7 @@
  * @license   https://www.gnu.org/licenses/gpl-3.0.txt GPL-3.0
  */
 
-namespace Finna\Stats\StatsProcessor;
+namespace Finna\Stats\Controllers;
 
 require_once(__DIR__ . '/../Abstracts/BaseAbstract.php');
 
