@@ -37,14 +37,24 @@ class UserCountController extends Base
     /** @var int|null Maximum number of seconds since last login or null for no limit */
     private $maxAge;
 
+    private $institutions = [];
+
+    public function __construct(\PDO $pdo, $settings)
+    {
+        parent::__construct($pdo, $settings);
+        $this->authMethods = $settings['authMethods'];
+        $this->maxAge = $settings['maxAge'];
+        $this->institutions = $settings['institutions'];
+    }
+
     public function run()
     {
-        $this->setAuthMethods($this->settings['authMethods']);
-        $results = $this->getAccountsByOrganisation($this->settings['institutions']);
+        $this->setAuthMethods($this->authMethods);
+        $results = $this->getAccountsByOrganisation($this->institutions);
         // Add statistics rows for active accounts
-        if (!empty($this->settings['maxAge'])) {
-            $this->setMaxAge($this->settings['maxAge']);
-            $active = $this->getAccountsByOrganisation($this->settings['institutions']);
+        if (!empty($this->maxAge)) {
+            $this->setMaxAge($this->maxAge);
+            $active = $this->getAccountsByOrganisation($this->institutions);
 
             foreach ($active as $key => $values) {
                 $active[$key]['name'] = $values['name'] . ' - active';

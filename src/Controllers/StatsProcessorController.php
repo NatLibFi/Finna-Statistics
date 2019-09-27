@@ -22,12 +22,16 @@
  * @license   https://www.gnu.org/licenses/gpl-3.0.txt GPL-3.0
  */
 
-namespace Finna\Stats\IndexCounts;
+namespace Finna\Stats\StatsProcessor;
+
+require_once(__DIR__ . '/../Abstracts/BaseAbstract.php');
+
+use Finna\Stats\BaseAbstract\BaseAbstract as Base;
 
 /**
  * Processes result counts from the Solr index.
  */
-class StatsProcessorController
+class StatsProcessorController extends Base
 {
     /** @var string The query URL to the Solr index */
     private $url;
@@ -38,31 +42,18 @@ class StatsProcessorController
     /** @var string[] List of custom queries that will be performed */
     private $queries;
 
-    /**
-     * Sets the query URL to the Solr index.
-     * @param string $url URL to the Solr index
-     */
-    public function setUrl($url)
+    public function __construct(\PDO $pdo, $settings)
     {
-        $this->url = (string) $url;
+        parent::__construct($pdo, $settings);
+        $this->url = (string)$settings['url'];
+        $this->filters = $settings['filters'];
+        $this->queries = $settings['queries'];
     }
 
-    /**
-     * Sets the known filters that can be applied to queries.
-     * @param string[] $filters Available query filters
-     */
-    public function setFilters(array $filters)
+    public function run()
     {
-        $this->filters = $filters;
-    }
-
-    /**
-     * Sets the list of additional custom queries that will be performed.
-     * @param string[] $queries List of custom queries to perform
-     */
-    public function setQueries(array $queries)
-    {
-        $this->queries = $queries;
+        $results = $processor->processFilterQueries($settings['filterSets']);
+        return $results;
     }
 
     /**
