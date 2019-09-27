@@ -56,6 +56,24 @@ class StatsProcessorController extends Base
         return $results;
     }
 
+    public function processResults($results)
+    {
+        $handle = fopen($this->output, 'a');
+
+        // E_WARNING is being emitted on false
+        if ($handle !== false) {
+            foreach ($results as $row) {
+                $success = fputcsv($handle, $row);
+                if ($success === false) {
+                    trigger_error('Failed to write line to file: ' . $this->output, E_USER_WARNING);
+                } 
+            }
+            if (fclose($handle) === false) {
+                trigger_error('Failed to close file: ' . $this->output, E_USER_WARNING);
+            }
+        }
+    }
+
     /**
      * Returns specific named filter.
      * @param string $name Name of the filter
