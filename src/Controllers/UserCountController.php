@@ -38,7 +38,41 @@ class UserCountController extends Base
 
     public function run()
     {
+        $this->setAuthMethods($this->settings['authMethods']);
+        $results = $this->getAccountsByOrganisation($this->settings['institutions']);
+        // Add statistics rows for active accounts
+        if (!empty($this->settings['maxAge'])) {
+            $this->setMaxAge($this->settings['maxAge']);
+            $active = $this->getAccountsByOrganisation($this->settings['institutions']);
 
+            foreach ($active as $key => $values) {
+                $active[$key]['name'] = $values['name'] . ' - active';
+            }
+
+            $results = array_merge($results, $active);
+        }
+    }
+
+    public function processResults($results)
+    {
+        // Save results in a csv file
+        $handle = fopen($this->output, 'a');
+
+        // E_WARNING is being emitted on false
+        if ($handle !== false) {
+            foreach ($results as $result) {
+                $success = fputcsv($handle, array_merge(
+                    [$result['date'], $result['name'], $result['total']],
+                    array_values($result['types'])
+                ));
+                if ($success === false) {
+                    trigger_error('Failed to write line to file: ' . $this->output, E_USER_WARNING);
+                }
+            }
+            if (fclose($handle) === false) {
+                trigger_error('Failed to close file: ' . $this->output, E_USER_WARNING);
+            }
+        }
     }
 
     /**

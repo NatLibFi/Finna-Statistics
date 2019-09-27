@@ -7,7 +7,7 @@
     },
     "UserCount" : {
         "table" : "user",
-  
+        "output" : "usercount.csv",
         "maxAge" : 2592000,
         "authMethods" : [
           "MozillaPersona"
