@@ -52,6 +52,7 @@ class UserCountController extends Base
 
             $results = array_merge($results, $active);
         }
+        return $results;
     }
 
     public function processResults($results)
