@@ -8,13 +8,14 @@ abstract class BaseAbstract
 
     protected $table;
 
-    protected $outputFile;
+    protected $output;
 
     protected $settings;
 
     public function __construct(\PDO $pdo, $settings) {
         $this->pdo = $pdo;
         $this->table = $settings['table'];
+        $this->output = $settings['output'];
         $this->settings = $settings;
     }
 

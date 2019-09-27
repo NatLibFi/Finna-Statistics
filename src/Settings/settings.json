@@ -17,7 +17,8 @@
         ]
     },
     "UserListCount" : {
-        "table" : "user_list"
+        "table" : "user_list",
+        "output" : "userlistcount.csv"
     },
     "StatsProcessor" : {
         "url" : "https://solr.finna.fi/solr/biblio/select",
