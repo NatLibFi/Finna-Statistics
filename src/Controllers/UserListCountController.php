@@ -44,7 +44,7 @@ class UserListCountController extends Base
     public function processResults($results)
     {
         $time = ["time" => date("Y-m-d\TH:i:sP")];
-        $result = array_merge($time, $results);
+        $results = array_merge($time, $results);
 
         $handle = fopen($this->output, 'a');
 
