@@ -20,7 +20,7 @@
  * @copyright 2019 University Of Helsinki (The National Library Of Finland)
  * @license   https://www.gnu.org/licenses/gpl-3.0.txt GPL-3.0
  */
-namespace Finna\Stats\UserListCounts;
+namespace Finna\Stats\UserListCount;
 
 require_once(__DIR__ . '/../Abstracts/BaseAbstract.php');
 

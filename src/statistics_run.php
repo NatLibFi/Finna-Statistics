@@ -38,7 +38,7 @@ $settings = new \Finna\Stats\Utility\SettingsFile();
 for ($i = 1; $i < count($argv); $i++) {
     // Lets start looping, first require needed php file
     require_once(__DIR__ . '/Controllers/' . $argv[$i] . 'Controller.php');
-    $name = '\\Finna\\Stats\\' . $argv[$i] . '\\' . $argv[$i];
+    $name = '\\Finna\\Stats\\' . $argv[$i] . '\\' . $argv[$i] . 'Controller';
     $pdo = $settings->loadDatabase($argv[$i]);
     $obj = new $name($pdo, $settings->offsetGet($argv[$i]));
     $obj->run();
