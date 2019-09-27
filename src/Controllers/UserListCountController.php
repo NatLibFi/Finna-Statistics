@@ -21,9 +21,10 @@
  * @license   https://www.gnu.org/licenses/gpl-3.0.txt GPL-3.0
  */
 namespace Finna\Stats\UserListCounts;
+
 require_once(__DIR__ . '/../Abstracts/BaseAbstract.php');
 
-use Finna\Stats\BaseAbstract as Base;
+use Finna\Stats\BaseAbstract\BaseAbstract as Base;
 
 class UserListCountController extends Base
 {

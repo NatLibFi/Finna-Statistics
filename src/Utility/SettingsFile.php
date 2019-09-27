@@ -31,9 +31,7 @@ class SettingsFile implements \ArrayAccess
     /** @var string Path to the settings file */
     private $filename = __DIR__ . '/../Settings/settings.json';
 
-    /**
-     * Settings file with all the settings reguired
-     */
+    /** @var array Settings read from the settings file */
     private $settings = [];
 
     /**
@@ -56,7 +54,7 @@ class SettingsFile implements \ArrayAccess
             throw new \RuntimeException("Error parsing settings: " . json_last_error_msg());
         }
 
-        $this->$settings = $settings;
+        $this->settings = $settings;
     }
 
     /**
@@ -65,8 +63,9 @@ class SettingsFile implements \ArrayAccess
      */
     public function loadDatabase($identifier = '')
     {
+        echo $identifier;
         $pointer = $this[$identifier]['db'] ?? $this['db'];
-
+        
         $pdo = new \PDO(
             sprintf("mysql:dbname=%s;host=%s;charset=utf8", $pointer['database'], $pointer['hostname']),
             $pointer['username'],
