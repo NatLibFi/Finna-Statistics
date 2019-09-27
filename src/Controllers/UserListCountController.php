@@ -28,6 +28,11 @@ use Finna\Stats\BaseAbstract\BaseAbstract as Base;
 
 class UserListCountController extends Base
 {
+    /**
+     * Process given results, triggers a user warning if file can not be read
+     * 
+     * @param array $results, given results
+     */
     public function run()
     {
         $stmt = $this->pdo->query("

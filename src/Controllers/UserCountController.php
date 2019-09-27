@@ -46,6 +46,11 @@ class UserCountController extends Base
         $this->institutions = $settings['institutions'];
     }
 
+    /**
+     * Process given results, triggers a user warning if file can not be read
+     * 
+     * @param array $results, given results
+     */
     public function run()
     {
         $this->setAuthMethods($this->authMethods);
@@ -105,8 +110,7 @@ class UserCountController extends Base
     }
 
     /**
-     * Returns a list of authenticated methods used in the user table.
-     * @return string[] List of authentication methods in the database
+     * Prints all authentication methods set in settings.json
      */
     public function listAuthMethods()
     {
@@ -114,8 +118,11 @@ class UserCountController extends Base
             SELECT DISTINCT `finna_auth_method` FROM `$this->table`
         ");
         $stmt->execute();
+        $results = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
 
-        return $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
+        foreach ($results as $method) {
+            echo ($method === null ? 'NULL' : $method) . PHP_EOL;
+        }
     }
 
     /**

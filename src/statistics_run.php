@@ -41,24 +41,35 @@ if (count($argv) === 1) {
 
 for ($i = 1; $i < count($argv); $i++) {
     $arg = $argv[$i];
+    $method = explode("=", $arg, 2);
+    if (count($method) > 1) {
+        $arg = $method[0];
+        $method = $method[1];
+    } else {
+        $method = false;
+    }
     if (in_array($arg, $properArguments)) {
         $file = __DIR__ . '/Controllers/' . $arg . 'Controller.php';
         $name = '\\Finna\\Stats\\Controllers\\' . $arg . 'Controller';
 
         if (!file_exists($file)) {
-            trigger_error("$file does not exist. Please check Settings/settings.json.", E_USER_WARNING);
+            trigger_error("$file does not exist. Please check that settings matches a controller file.", E_USER_WARNING);
         } else {
             require_once($file);
         }
 
         if (!class_exists($name)) {
-            trigger_error("$name does not exist. Please check Settings/settings.json.", E_USER_WARNING);
+            trigger_error("$name does not exist. Please check that settings matches a controller class.", E_USER_WARNING);
         } else {
             $pdo = $settings->loadDatabase($arg);
             $obj = new $name($pdo, $settings->offsetGet($arg));
-            $result = $obj->run();
-            if ($result) {
-                $obj->processResults($result);
+            if ($method !== false) {
+                $obj->$method();
+            } else {
+                $result = $obj->run();
+                if ($result) {
+                    $obj->processResults($result);
+                }
             }
         }
     } else {

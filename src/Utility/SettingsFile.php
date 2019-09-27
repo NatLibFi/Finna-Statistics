@@ -75,7 +75,6 @@ class SettingsFile implements \ArrayAccess
      */
     public function loadDatabase($identifier = '')
     {
-        echo $identifier;
         $pointer = $this[$identifier]['db'] ?? $this['db'];
         
         $pdo = new \PDO(
