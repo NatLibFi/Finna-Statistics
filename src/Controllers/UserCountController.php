@@ -21,7 +21,7 @@
  * @license   https://www.gnu.org/licenses/gpl-3.0.txt GPL-3.0
  */
 
-namespace Finna\Stats\UserCounts;
+namespace Finna\Stats\UserCount;
 
 require_once(__DIR__ . '/../Abstracts/BaseAbstract.php');
 use Finna\Stats\BaseAbstract\BaseAbstract as Base;
