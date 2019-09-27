@@ -40,19 +40,22 @@ if (count($argv) === 1) {
 }
 
 for ($i = 1; $i < count($argv); $i++) {
-    if (in_array($argv[$i], $properArguments)) {
-        require_once(__DIR__ . '/Controllers/' . $argv[$i] . 'Controller.php');
-        $name = '\\Finna\\Stats\\' . $argv[$i] . '\\' . $argv[$i] . 'Controller';
-        if (class_exists($name)) {
-            echo "Class exists properly";
-        }
-        $pdo = $settings->loadDatabase($argv[$i]);
-        $obj = new $name($pdo, $settings->offsetGet($argv[$i]));
-        $result = $obj->run();
-        if ($result) {
-            $obj->processResults($result);
+    $arg = $argv[$i];
+    if (in_array($arg, $properArguments)) {
+        $file = __DIR__ . '/Controllers/' . $arg . 'Controller.php';
+        $name = '\\Finna\\Stats\\' . $arg . '\\' . $arg . 'Controller';
+        if (!file_exists($file) || !class_exists($name)) {
+            trigger_error("$file does not exist. Please check Settings/settings.json.", E_USER_WARNING);
+        } else {
+            require_once($file);
+            $pdo = $settings->loadDatabase($arg);
+            $obj = new $name($pdo, $settings->offsetGet($arg));
+            $result = $obj->run();
+            if ($result) {
+                $obj->processResults($result);
+            }
         }
     } else {
-        echo 'Argument ' . $argv[$i] . ' is not a proper argument.';
+        echo "Argument $arg is not a proper argument.";
     }
 }

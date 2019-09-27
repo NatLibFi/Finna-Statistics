@@ -1,7 +1,7 @@
 <?php
 /**
  * Finna statistics utility scripts.
- * Copyright (c) 2015 University Of Helsinki (The National Library Of Finland)
+ * Copyright (c) 2019 University Of Helsinki (The National Library Of Finland)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @author    Riikka Kalliomäki <riikka.kalliomaki@helsinki.fi>
- * @copyright 2015 University Of Helsinki (The National Library Of Finland)
+ * @author    Juha Luoma <juha.luoma@helsinki.fi>
+ * @copyright 2019 University Of Helsinki (The National Library Of Finland)
  * @license   https://www.gnu.org/licenses/gpl-3.0.txt GPL-3.0
  */
-
 namespace Finna\Stats\UserCount;
 
 require_once(__DIR__ . '/../Abstracts/BaseAbstract.php');
