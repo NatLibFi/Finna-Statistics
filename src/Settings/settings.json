@@ -44,4 +44,4 @@
         "Database connection can be overwritten with adding a property db : to a specific object",
         "db : {'username': '', 'password' : '', 'hostname' : '', 'database': ''}"
     ]
-  }
+}

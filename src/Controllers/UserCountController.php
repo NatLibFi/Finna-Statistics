@@ -100,7 +100,7 @@ class UserCountController extends Base
     }
 
     /**
-     * Prints all authentication methods set in settings.json
+     * Prints all authentication methods found in database
      */
     public function listAuthMethods()
     {
