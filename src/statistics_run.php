@@ -36,6 +36,7 @@ if (count($argv) === 1) {
     foreach ($properArguments as $argument) {
         echo $argument . PHP_EOL;
     }
+    echo "To use a specific method use Argument1=Method";
     die();
 }
 

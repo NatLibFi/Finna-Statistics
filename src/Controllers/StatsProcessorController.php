@@ -18,6 +18,7 @@
  *
  * @author    Riikka Kalliomäki <riikka.kalliomaki@helsinki.fi>
  * @author    Ere Maijala <ere.maijala@helsinki.fi>
+ * @author    Juha Luoma <juha.luoma@helsinki.fi>
  * @copyright 2015-2018 University Of Helsinki (The National Library Of Finland)
  * @license   https://www.gnu.org/licenses/gpl-3.0.txt GPL-3.0
  */

@@ -53,7 +53,6 @@ class UserCountController extends Base
      */
     public function run()
     {
-        $this->setAuthMethods($this->authMethods);
         $results = $this->getAccountsByOrganisation($this->institutions);
         // Add statistics rows for active accounts
         if (!empty($this->maxAge)) {
@@ -98,15 +97,6 @@ class UserCountController extends Base
     public function setMaxAge($seconds)
     {
         $this->maxAge = $seconds === null ? null : (int) $seconds;
-    }
-
-    /**
-     * Sets the authentication methods to look for in the database
-     * @param string[] $authMethods Authentication methods to look for
-     */
-    public function setAuthMethods(array $authMethods)
-    {
-        $this->authMethods = $authMethods;
     }
 
     /**
