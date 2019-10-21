@@ -1,7 +1,7 @@
 <?php
 /**
  * Finna statistics utility scripts.
- * Copyright (c) 2015 University Of Helsinki (The National Library Of Finland)
+ * Copyright (c) 2019 University Of Helsinki (The National Library Of Finland)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,40 +16,78 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @author    Riikka Kalliomäki <riikka.kalliomaki@helsinki.fi>
- * @copyright 2015 University Of Helsinki (The National Library Of Finland)
+ * @author    Juha Luoma <juha.luoma@helsinki.fi>
+ * @copyright 2019 University Of Helsinki (The National Library Of Finland)
  * @license   https://www.gnu.org/licenses/gpl-3.0.txt GPL-3.0
  */
+namespace Finna\Stats\Controllers;
 
-namespace Finna\Stats\UserCounts;
+require_once(__DIR__ . '/../Abstracts/BaseAbstract.php');
+use Finna\Stats\BaseAbstract\BaseAbstract as Base;
 
 /**
  * Generates statistics about user accounts.
  */
-class UserCountStatistics
+class UserCountController extends Base
 {
-    /** @var \PDO The PDO instance used to access the user database. */
-    private $pdo;
-
-    /** @var string Name of the table containing the user data */
-    private $table;
-
     /** @var string[] List of authentication methods retrieved from the database */
-    private $authMethods;
+    private $authMethods = [];
 
     /** @var int|null Maximum number of seconds since last login or null for no limit */
     private $maxAge;
 
-    /**
-     * Creates a new instance of UserCountStatistics.
-     * @param \PDO $pdo The connection used to access the user database
-     * @param string $table Name of the table containing the user data
-     */
-    public function __construct(\PDO $pdo, $table = 'user')
+    private $institutions = [];
+
+    public function __construct(\PDO $pdo, $settings)
     {
-        $this->pdo = $pdo;
-        $this->table = $table;
-        $this->authMethods = [];
+        parent::__construct($pdo, $settings);
+        $this->authMethods = $settings['authMethods'];
+        $this->maxAge = $settings['maxAge'];
+        $this->institutions = $settings['institutions'];
+    }
+
+    /**
+     * Process given results, triggers a user warning if file can not be read
+     * 
+     * @param array $results, given results
+     */
+    public function run()
+    {
+        $results = $this->getAccountsByOrganisation($this->institutions);
+        // Add statistics rows for active accounts
+        if (!empty($this->maxAge)) {
+            $this->setMaxAge($this->maxAge);
+            $active = $this->getAccountsByOrganisation($this->institutions);
+
+            foreach ($active as $key => $values) {
+                $active[$key]['name'] = $values['name'] . ' - active';
+            }
+
+            $results = array_merge($results, $active);
+        }
+        return $results;
+    }
+
+    public function processResults($results)
+    {
+        // Save results in a csv file
+        $handle = fopen($this->output, 'a');
+
+        // E_WARNING is being emitted on false
+        if ($handle !== false) {
+            foreach ($results as $result) {
+                $success = fputcsv($handle, array_merge(
+                    [$result['date'], $result['name'], $result['total']],
+                    array_values($result['types'])
+                ));
+                if ($success === false) {
+                    trigger_error('Failed to write line to file: ' . $this->output, E_USER_WARNING);
+                }
+            }
+            if (fclose($handle) === false) {
+                trigger_error('Failed to close file: ' . $this->output, E_USER_WARNING);
+            }
+        }
     }
 
     /**
@@ -62,17 +100,7 @@ class UserCountStatistics
     }
 
     /**
-     * Sets the authentication methods to look for in the database
-     * @param string[] $authMethods Authentication methods to look for
-     */
-    public function setAuthMethods(array $authMethods)
-    {
-        $this->authMethods = $authMethods;
-    }
-
-    /**
-     * Returns a list of authenticated methods used in the user table.
-     * @return string[] List of authentication methods in the database
+     * Prints all authentication methods found in database
      */
     public function listAuthMethods()
     {
@@ -80,8 +108,11 @@ class UserCountStatistics
             SELECT DISTINCT `finna_auth_method` FROM `$this->table`
         ");
         $stmt->execute();
+        $results = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
 
-        return $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
+        foreach ($results as $method) {
+            echo ($method === null ? 'NULL' : $method) . PHP_EOL;
+        }
     }
 
     /**

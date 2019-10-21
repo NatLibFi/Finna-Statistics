@@ -18,16 +18,21 @@
  *
  * @author    Riikka Kalliomäki <riikka.kalliomaki@helsinki.fi>
  * @author    Ere Maijala <ere.maijala@helsinki.fi>
+ * @author    Juha Luoma <juha.luoma@helsinki.fi>
  * @copyright 2015-2018 University Of Helsinki (The National Library Of Finland)
  * @license   https://www.gnu.org/licenses/gpl-3.0.txt GPL-3.0
  */
 
-namespace Finna\Stats\IndexCounts;
+namespace Finna\Stats\Controllers;
+
+require_once(__DIR__ . '/../Abstracts/BaseAbstract.php');
+
+use Finna\Stats\BaseAbstract\BaseAbstract as Base;
 
 /**
  * Processes result counts from the Solr index.
  */
-class StatsProcessor
+class StatsProcessorController extends Base
 {
     /** @var string The query URL to the Solr index */
     private $url;
@@ -38,31 +43,50 @@ class StatsProcessor
     /** @var string[] List of custom queries that will be performed */
     private $queries;
 
-    /**
-     * Sets the query URL to the Solr index.
-     * @param string $url URL to the Solr index
-     */
-    public function setUrl($url)
+    /** @var string[] List of filter sets */
+    private $filterSets = [];
+
+    public function __construct(\PDO $pdo, $settings)
     {
-        $this->url = (string) $url;
+        parent::__construct($pdo, $settings);
+        $this->url = (string)$settings['url'];
+        $this->filters = $settings['filters'];
+        $this->queries = $settings['queries'];
+        $this->filterSets = $settings['filterSets'];
     }
 
     /**
-     * Sets the known filters that can be applied to queries.
-     * @param string[] $filters Available query filters
+     * Runs the desired code to fetch data
+     * 
+     * @return array Returns the response of query/queries
      */
-    public function setFilters(array $filters)
+    public function run()
     {
-        $this->filters = $filters;
+        $results = $this->processFilterQueries($this->filterSets);
+        return $results;
     }
 
     /**
-     * Sets the list of additional custom queries that will be performed.
-     * @param string[] $queries List of custom queries to perform
+     * Process given results, triggers a user warning if file can not be read
+     * 
+     * @param array $results, given results
      */
-    public function setQueries(array $queries)
+    public function processResults($results)
     {
-        $this->queries = $queries;
+        $handle = fopen($this->output, 'a');
+
+        // E_WARNING is being emitted on false
+        if ($handle !== false) {
+            foreach ($results as $row) {
+                $success = fputcsv($handle, $row);
+                if ($success === false) {
+                    trigger_error('Failed to write line to file: ' . $this->output, E_USER_WARNING);
+                } 
+            }
+            if (fclose($handle) === false) {
+                trigger_error('Failed to close file: ' . $this->output, E_USER_WARNING);
+            }
+        }
     }
 
     /**
