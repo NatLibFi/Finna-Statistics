@@ -48,7 +48,7 @@ class UserCountController extends Base
 
     /**
      * Process given results, triggers a user warning if file can not be read
-     * 
+     *
      * @param array $results, given results
      */
     public function run()
@@ -243,6 +243,6 @@ class UserCountController extends Base
             GROUP BY SUBSTRING_INDEX(`username`, ':', 1), `auth_method`
         ";
 
-        return [$sql, $params];
+        return [$sql, array_values($params)];
     }
 }
