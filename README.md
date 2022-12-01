@@ -10,12 +10,14 @@ Multiple arguments can be entered at the same time.
 If you want to run a more specific method, please use `Argument1=Method`
 
 All the settings are declared inside `Settings/settings.json` file.
-Key is the name of class to declare settings to.
-Global settings db holds the data for database connections.
-Personal database connection can be declared for an individual setting by adding key db for correct setting.
-See comment in `settings.json` for more info.
+Copy `Settings/settings.json.sample` to `Settings/settings.json` as an initial template.
+Key is the name of class to define settings for.
+Global settings `db` holds the configuration for the database connection.
+Personal database connection can be defined for an individual class by adding key `db` for correct setting.
+See comments in `settings.json.sample` for more info.
 
 ### Database connection settings ###
+
 The `settings.json` file contains following settings for "db":
   * `username` : The database username used to access the database
   * `password` : The password for the database user

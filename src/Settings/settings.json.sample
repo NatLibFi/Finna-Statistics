@@ -10,9 +10,12 @@
         "output" : "usercount.csv",
         "maxAge" : 2592000,
         "authMethods" : [
-          "MozillaPersona"
+            "database",
+            "MultiILS",
+            "Shibboleth",
+            null
         ],
-      
+
         "institutions" : [
         ]
     },
