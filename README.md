@@ -1,4 +1,4 @@
-# Finna Statistical Analysis #
+# Finna Statistical Analysis
 
 This project contains tools and utilities related to statistical analysis of
 Finna.
@@ -83,7 +83,7 @@ The script returns the amount of lists made by users and how many of those lists
 are public.
 
 The results will be appended as CSV rows to the provided `output setting` in settings.
-Each result row contains timestamps in format `UTC+0` with fields `total` and 
+Each result row contains timestamps in format `UTC+0` with fields `total` and
 `public` amount of lists.
 
 ### Configuration ###

@@ -76,7 +76,7 @@ class SettingsFile implements \ArrayAccess
     public function loadDatabase($identifier = '')
     {
         $pointer = $this[$identifier]['db'] ?? $this['db'];
-        
+
         $pdo = new \PDO(
             sprintf("mysql:dbname=%s;host=%s;charset=utf8", $pointer['database'], $pointer['hostname']),
             $pointer['username'],
@@ -103,7 +103,7 @@ class SettingsFile implements \ArrayAccess
      * @param string $offset Name of the settings value
      * @return bool True if setting exists, false if not
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return array_key_exists($offset, $this->settings);
     }
@@ -113,7 +113,7 @@ class SettingsFile implements \ArrayAccess
      * @param string $offset Name of the settings value
      * @return mixed Value for the setting
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         if (!isset($this[$offset])) {
             throw new \InvalidArgumentException("Invalid setting name '$offset'");
@@ -126,7 +126,7 @@ class SettingsFile implements \ArrayAccess
      * @param string $offset Name of the settings value
      * @param mixed $value Value for the setting
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->settings[$offset] = $value;
     }
@@ -135,7 +135,7 @@ class SettingsFile implements \ArrayAccess
      * Unset the settings value.
      * @param string $offset Name of the settings value
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->settings[$offset]);
     }

@@ -41,7 +41,7 @@ class UserCountController extends Base
     public function __construct(\PDO $pdo, $settings)
     {
         parent::__construct($pdo, $settings);
-        $this->authMethods = $settings['authMethods'];
+        $this->authMethods = $settings['authMethods'] ?? [];
         $this->maxAge = $settings['maxAge'];
         $this->institutions = $settings['institutions'];
     }
@@ -144,7 +144,18 @@ class UserCountController extends Base
             'date' => date('c'),
             'name' => '',
             'total' => 0,
-            'types' => array_fill_keys(array_map('strtolower', $methods), 0),
+            'types' => array_fill_keys(
+                array_map(
+                    function ($method) {
+                        if (null !== $method) {
+                            $method = strtolower($method);
+                        }
+                        return $method;
+                    },
+                    $methods
+                ),
+                0
+            ),
         ];
 
         $total = $emptyRow;
